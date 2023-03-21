@@ -1,0 +1,37 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Reflection" #>
+<#@ output extension=".cs" #>
+
+<#
+
+
+#>
+
+<#
+string templateDirectory = Path.GetDirectoryName(Host.TemplateFile);
+
+var classes = new string[]{
+	"testlib.Class1,testlib"
+};
+
+foreach(var clazz in classes) {
+	var type = Type.GetType(clazz);
+	var properties = type?.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+	foreach (var property in properties)
+	{
+		string outputFilePath = Path.Combine(templateDirectory, $"{type.Name}.txt");
+
+		WriteLine(property.PropertyType.Name);
+		WriteLine(property.Name);
+		File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString());
+		this.GenerationEnvironment.Clear();
+	}
+}
+
+#>
